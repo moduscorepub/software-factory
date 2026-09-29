@@ -112,10 +112,16 @@ def init(
     """Bind this repository to the factory."""
     root = repo.toplevel(Path.cwd()) or fail("not inside a git repository")
     d = root / FACTORY_DIR
-    if (d / "config.yaml").exists() and not force:
-        fail("already initialised; use --force to rewrite config.yaml")
-    prefix = prefix or re.sub(r"[^A-Z0-9]", "", root.name.upper())[:10] or "WORK"
-    base = base or repo.git(root, "symbolic-ref", "--short", "HEAD", check=False).strip() or "main"
+    existing = d / "config.yaml"
+    if existing.exists() and not force:
+        if not protect:
+            fail("already initialised; --force rewrites config.yaml, --protect alone adds the GitHub ruleset")
+        console.print(github.protect(github.slug()))
+        return
+    old = Config.model_validate(yaml.safe_load(existing.read_text())) if existing.exists() else None
+    prefix = prefix or (old.work_prefix if old else re.sub(r"[^A-Z0-9]", "", root.name.upper())[:10] or "WORK")
+    base = base or (old.base_branch if old else "") or repo.git(
+        root, "symbolic-ref", "--short", "HEAD", check=False).strip() or "main"
     cfg = Config(work_prefix=prefix, base_branch=base, commands=_detect(root))
     d.mkdir(exist_ok=True)
     (d / "config.yaml").write_text(yaml.safe_dump(cfg.model_dump(), sort_keys=False))

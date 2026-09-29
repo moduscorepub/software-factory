@@ -172,6 +172,28 @@ The generated workflow runs the composite action in this repository. Add an `ANT
 posted and `factory/review` is left unset, so a required `factory/review` keeps blocking until someone runs
 `factory review <PR> --post` with model access.
 
+## Vertical proof
+
+The v0 acceptance test from the design, run for real in
+[software-factory-demo](https://github.com/moduscorepub/software-factory-demo) (seeded from
+`examples/pricing`):
+
+1. `factory spec "need bulk discount on carts lol. like if ppl buy loads they get 5% off, 10+ items i think.
+   promo codes still gotta work" --yes --approve` asked three material questions (how discounts stack, what
+   counts as an item, compatibility), converged five adversarial criticisms and approved a contract with 7
+   requirements, 12 Given/When/Then criteria and 1 task, in about three minutes.
+2. `factory publish PRICING-1` rendered the Confluence page and Jira payloads (dry run: no Atlassian
+   credentials were available).
+3. `factory work PRICING-1/T-001 --headless` ran Claude Code under the plugin. The journal records the
+   SessionStart context, every edit and test run, one REFLECT hold, then `gate_pass` with a proving test for
+   all 12 criteria.
+4. A subtle regression was committed on purpose: an empty-cart fast path that skips promo-code validation.
+   All 15 tests still pass.
+5. `factory review 1 --post`: the deterministic checks pass; all four semantic reviewers flagged the fast
+   path independently; the regression adversary's differential shadow test passed on base and failed on head
+   (E3), and the reducer merged the four into one finding. `factory/review` failed and
+   [PR #1](https://github.com/moduscorepub/software-factory-demo/pull/1) is blocked from merging by the ruleset.
+
 ## Layout
 
 ```
