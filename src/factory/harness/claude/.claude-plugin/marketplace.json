@@ -1,0 +1,14 @@
+{
+  "name": "factory-local",
+  "description": "Local marketplace for the software-factory Claude Code harness.",
+  "owner": {
+    "name": "moduscorepub"
+  },
+  "plugins": [
+    {
+      "name": "factory",
+      "source": "./plugin",
+      "description": "Software-factory harness: Work Contract context, tool guards, execution journal and an evidence-based stop gate."
+    }
+  ]
+}

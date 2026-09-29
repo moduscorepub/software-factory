@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {"hooks": [{"type": "command", "command": "${FACTORY_BIN:-factory} hook session-start", "timeout": 60}]}
+    ],
+    "UserPromptSubmit": [
+      {"hooks": [{"type": "command", "command": "${FACTORY_BIN:-factory} hook prompt-submit", "timeout": 60}]}
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Read",
+        "hooks": [{"type": "command", "command": "${FACTORY_BIN:-factory} hook pre-tool", "timeout": 30}]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|TodoWrite|ExitPlanMode",
+        "hooks": [{"type": "command", "command": "${FACTORY_BIN:-factory} hook post-tool", "timeout": 30}]
+      }
+    ],
+    "Stop": [
+      {"hooks": [{"type": "command", "command": "${FACTORY_BIN:-factory} hook stop", "timeout": 1800}]}
+    ]
+  }
+}

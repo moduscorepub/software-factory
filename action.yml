@@ -1,0 +1,28 @@
+name: software-factory evidence gate
+description: Verify a pull request against its Work Contract and constitution, then post factory/* status checks.
+branding:
+  icon: check-square
+  color: green
+inputs:
+  pr:
+    description: Pull request number.
+    default: ${{ github.event.pull_request.number }}
+  args:
+    description: Extra arguments for `factory review` (e.g. --no-shadow).
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@v6
+    - name: Install factory
+      shell: bash
+      run: uv tool install "${{ github.action_path }}"
+    - name: Install Claude Code (semantic reviewers)
+      if: env.ANTHROPIC_API_KEY != '' || env.CLAUDE_CODE_OAUTH_TOKEN != ''
+      shell: bash
+      run: npm install -g @anthropic-ai/claude-code
+    - name: factory review
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: factory review "${{ inputs.pr }}" --post ${{ inputs.args }}

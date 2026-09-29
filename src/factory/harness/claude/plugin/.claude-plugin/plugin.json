@@ -1,0 +1,9 @@
+{
+  "name": "factory",
+  "version": "0.1.0",
+  "description": "Software-factory harness: Work Contract context, tool guards, execution journal and an evidence-based stop gate.",
+  "author": {
+    "name": "moduscorepub"
+  },
+  "license": "MIT"
+}
